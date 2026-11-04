@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, CheckCircle2, AlertCircle, Save, RotateCcw, Download, Trash2, Send, DollarSign, MessageSquare, KeyRound, Shield } from 'lucide-react';
-import { getWarehouseSettings, saveWarehouseSettings, resetWarehouseSettings, WarehouseSettings, getAdminPin, setAdminPin, resetAdminPin } from '../utils/pricesStore';
+import { X, Lock, CheckCircle2, AlertCircle, Save, RotateCcw, Download, Trash2, Send, DollarSign, MessageSquare, KeyRound, LogOut, ShieldAlert } from 'lucide-react';
+import { getWarehouseSettings, saveWarehouseSettings, resetWarehouseSettings, WarehouseSettings, getAdminPin, setAdminPin, resetAdminPin, verifyAdminPin, getBackupPin, setBackupPin } from '../utils/pricesStore';
 import { getTelegramConfig, saveTelegramConfig, sendLeadToTelegram } from '../services/telegram';
 
 interface AdminPanelProps {
@@ -17,7 +17,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   const [settings, setSettings] = useState<WarehouseSettings>(() => getWarehouseSettings());
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Telegram settings
+  // Telegram
   const [tgToken, setTgToken] = useState(() => getTelegramConfig().token);
   const [tgChatId, setTgChatId] = useState(() => getTelegramConfig().chatId);
   const [tgTesting, setTgTesting] = useState(false);
@@ -26,20 +26,28 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   // Leads
   const [leads, setLeads] = useState<any[]>([]);
 
-  // PIN change state
+  // Security / PIN
   const [currentPinInput, setCurrentPinInput] = useState('');
   const [newPinInput, setNewPinInput] = useState('');
   const [confirmPinInput, setConfirmPinInput] = useState('');
+  const [newBackupPinInput, setNewBackupPinInput] = useState('');
   const [pinChangeStatus, setPinChangeStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // При каждом открытии панели всегда требуем ввод PIN-кода
   useEffect(() => {
     if (isOpen) {
+      setIsAuthenticated(false);
+      setPinInput('');
+      setPinError(false);
+      setPinChangeStatus(null);
       loadLeads();
       setSettings(getWarehouseSettings());
       setTgToken(getTelegramConfig().token);
       setTgChatId(getTelegramConfig().chatId);
-      setPinError(false);
-      setPinChangeStatus(null);
+      setNewBackupPinInput(getBackupPin());
+    } else {
+      setIsAuthenticated(false);
+      setPinInput('');
     }
   }, [isOpen]);
 
@@ -53,20 +61,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleClose = () => {
+    setIsAuthenticated(false);
+    setPinInput('');
+    setPinError(false);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const currentPin = getAdminPin();
-    const entered = pinInput.trim();
-    // Allows current pin, or emergency factory rescue pin '1234' / '9999'
-    if (entered === currentPin || entered === '1234' || entered === '9999') {
+    if (verifyAdminPin(pinInput)) {
       setIsAuthenticated(true);
       setPinError(false);
       setPinInput('');
     } else {
       setPinError(true);
     }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setPinInput('');
+    setPinError(false);
   };
 
   const handleSavePrices = (e: React.FormEvent) => {
@@ -77,7 +95,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   };
 
   const handleResetPrices = () => {
-    if (confirm('Сбросить все цены к заводским значениям по умолчанию?')) {
+    if (confirm('Сбросить все цены к значениям по умолчанию?')) {
       const def = resetWarehouseSettings();
       setSettings(def);
       setSaveSuccess(true);
@@ -87,8 +105,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
   const handleChangePin = (e: React.FormEvent) => {
     e.preventDefault();
-    const actualPin = getAdminPin();
-    if (currentPinInput.trim() !== actualPin && currentPinInput.trim() !== '9999') {
+    if (!verifyAdminPin(currentPinInput)) {
       setPinChangeStatus({ type: 'error', message: 'Текущий PIN-код указан неверно' });
       return;
     }
@@ -103,7 +120,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
     const success = setAdminPin(newPinInput.trim());
     if (success) {
-      setPinChangeStatus({ type: 'success', message: `PIN-код успешно изменен на: ${newPinInput.trim()}` });
+      setPinChangeStatus({ type: 'success', message: 'Новый PIN-код успешно сохранен!' });
       setCurrentPinInput('');
       setNewPinInput('');
       setConfirmPinInput('');
@@ -112,10 +129,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleSaveBackupPin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newBackupPinInput.trim().length < 4) {
+      setPinChangeStatus({ type: 'error', message: 'Резервный код должен быть от 4 до 12 знаков' });
+      return;
+    }
+    const ok = setBackupPin(newBackupPinInput.trim());
+    if (ok) {
+      setPinChangeStatus({ type: 'success', message: 'Резервный код успешно обновлен!' });
+    } else {
+      setPinChangeStatus({ type: 'error', message: 'Ошибка при сохранении резервного кода' });
+    }
+  };
+
   const handleResetToDefaultPin = () => {
-    if (confirm('Сбросить PIN-код к заводскому значению 1234?')) {
+    if (confirm('Сбросить авторизацию к исходным настройкам?')) {
       resetAdminPin();
-      setPinChangeStatus({ type: 'success', message: 'PIN-код сброшен к заводскому значению (1234)' });
+      setPinChangeStatus({ type: 'success', message: 'Настройки доступа сброшены' });
+      setNewBackupPinInput(getBackupPin());
     }
   };
 
@@ -127,17 +159,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
     try {
       const res = await sendLeadToTelegram({
-        name: 'Проверка из админ-панели',
+        name: 'Проверка настроек склада',
         phone: '+375 (44) 702-25-33',
-        material: 'Тестовый запрос настроек',
-        comment: 'Если вы получили это сообщение — бот настроен верно!',
-        source: 'Админ-панель склада',
+        material: 'Тестовый запрос',
+        comment: 'Бот подключен успешно',
+        source: 'Панель управления',
       });
 
       if (res.success && !res.isSimulated) {
         setTgResult({
           success: true,
-          message: 'Отлично! Тестовое сообщение мгновенно доставлено в Telegram!',
+          message: 'Тестовое сообщение доставлено в Telegram!',
         });
       } else {
         setTgResult({
@@ -157,7 +189,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
   const handleExportCSV = () => {
     if (leads.length === 0) {
-      alert('Пока нет поступивших заявок для экспорта.');
+      alert('Пока нет сохраненных заявок.');
       return;
     }
 
@@ -185,7 +217,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
   };
 
   const handleClearHistory = () => {
-    if (confirm('Очистить весь журнал заявок в браузере?')) {
+    if (confirm('Очистить журнал заявок на этом устройстве?')) {
       localStorage.removeItem('dom_amk_lead_history');
       setLeads([]);
     }
@@ -197,9 +229,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         
         {/* Кнопка закрытия */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-          aria-label="Закрыть панель"
+          aria-label="Закрыть"
         >
           <X className="w-4 h-4" />
         </button>
@@ -220,7 +252,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             <form onSubmit={handlePinSubmit} className="space-y-3">
               <input
                 type="password"
-                maxLength={8}
+                maxLength={12}
                 autoFocus
                 placeholder="Введите PIN-код"
                 value={pinInput}
@@ -231,7 +263,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               {pinError && (
                 <div className="text-xs text-rose-400 flex items-center justify-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5" />
-                  <span>Неверный PIN-код</span>
+                  <span>Неверный код доступа</span>
                 </div>
               )}
 
@@ -246,15 +278,24 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         ) : (
           <div>
             {/* Шапка админки */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4 pr-8">
               <div>
                 <span className="text-[10px] uppercase font-bold text-amber-400 tracking-wider">
-                  Администрирование склада • dom-amk.by
+                  Управление складом
                 </span>
                 <h3 className="text-lg font-black text-white">
-                  Панель управления ценами и заявками
+                  Панель цен и заявок
                 </h3>
               </div>
+
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                title="Заблокировать панель"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Выйти</span>
+              </button>
             </div>
 
             {/* Вкладки */}
@@ -304,7 +345,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                 }`}
               >
                 <KeyRound className="w-3.5 h-3.5" />
-                <span>Смена PIN</span>
+                <span>Безопасность и PIN</span>
               </button>
             </div>
 
@@ -314,18 +355,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                 {saveSuccess && (
                   <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>Цены успешно сохранены и обновлены в каталоге и калькуляторе на сайте!</span>
+                    <span>Цены успешно обновлены на сайте!</span>
                   </div>
                 )}
 
                 {/* 1. Плиты OSB-3 */}
                 <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 space-y-3">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                    1. Плиты OSB-3 (ОСБ) влагостойкие (цена за 1 лист 2500×1250 мм, BYN)
+                    1. Плиты ОСБ-3 влагостойкие (цена за 1 лист 2500×1250 мм, BYN)
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">OSB-3 9 мм:</label>
+                      <label className="block text-[11px] text-slate-400 mb-1">ОСБ-3 9 мм:</label>
                       <input
                         type="number"
                         step="0.1"
@@ -335,7 +376,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">OSB-3 12 мм:</label>
+                      <label className="block text-[11px] text-slate-400 mb-1">ОСБ-3 12 мм:</label>
                       <input
                         type="number"
                         step="0.1"
@@ -345,7 +386,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">OSB-3 15 мм:</label>
+                      <label className="block text-[11px] text-slate-400 mb-1">ОСБ-3 15 мм:</label>
                       <input
                         type="number"
                         step="0.1"
@@ -355,7 +396,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">OSB-3 18 мм:</label>
+                      <label className="block text-[11px] text-slate-400 mb-1">ОСБ-3 18 мм:</label>
                       <input
                         type="number"
                         step="0.1"
@@ -365,7 +406,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] text-slate-400 mb-1">OSB-3 22 мм:</label>
+                      <label className="block text-[11px] text-slate-400 mb-1">ОСБ-3 22 мм:</label>
                       <input
                         type="number"
                         step="0.1"
@@ -501,7 +542,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                     className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Сбросить к заводским</span>
+                    <span>Сбросить к исходным</span>
                   </button>
 
                   <button
@@ -544,7 +585,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
                 {leads.length === 0 ? (
                   <div className="py-8 text-center text-xs text-slate-500">
-                    Пока нет сохраненных заявок. Они будут автоматически появляться здесь при отправке клиентами.
+                    Пока нет сохраненных заявок.
                   </div>
                 ) : (
                   <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
@@ -586,7 +627,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             {activeTab === 'telegram' && (
               <form onSubmit={handleSaveTelegram} className="space-y-4">
                 <div className="text-xs text-slate-300 leading-relaxed">
-                  Здесь можно в любой момент проверить или заменить Telegram-бота, куда мгновенно приходят заявки со склада.
+                  Настройки Telegram-бота для получения уведомлений о заявках.
                 </div>
 
                 {tgResult && (
@@ -608,7 +649,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Bot Token (от @BotFather):
+                    Bot Token:
                   </label>
                   <input
                     type="text"
@@ -638,18 +679,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                   className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider cursor-pointer shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>{tgTesting ? 'Отправка теста...' : 'Проверить и сохранить Telegram'}</span>
+                  <span>{tgTesting ? 'Отправка...' : 'Проверить и сохранить Telegram'}</span>
                 </button>
               </form>
             )}
 
-            {/* Вкладка 4: Смена PIN-кода */}
+            {/* Вкладка 4: Безопасность и PIN */}
             {activeTab === 'security' && (
-              <form onSubmit={handleChangePin} className="space-y-4 max-w-md">
-                <div className="text-xs text-slate-300 leading-relaxed">
-                  Установите ваш собственный PIN-код для входа в панель управления складом (от 4 до 8 цифр).
-                </div>
-
+              <div className="space-y-6 max-w-md">
                 {pinChangeStatus && (
                   <div
                     className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
@@ -667,70 +704,108 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Текущий PIN-код:
-                  </label>
-                  <input
-                    type="password"
-                    maxLength={8}
-                    required
-                    placeholder="Например, 1234"
-                    value={currentPinInput}
-                    onChange={(e) => setCurrentPinInput(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+                {/* Основной PIN */}
+                <form onSubmit={handleChangePin} className="space-y-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5 text-amber-400">
+                    <KeyRound className="w-4 h-4" />
+                    <span>Смена основного PIN-кода</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    После сохранения нового кода старый пароль (1234) полностью отключается.
+                  </p>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Новый PIN-код (от 4 до 8 цифр):
-                  </label>
-                  <input
-                    type="password"
-                    maxLength={8}
-                    required
-                    placeholder="Введите новый код"
-                    value={newPinInput}
-                    onChange={(e) => setNewPinInput(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Текущий PIN-код (или резервный):
+                    </label>
+                    <input
+                      type="password"
+                      maxLength={12}
+                      required
+                      value={currentPinInput}
+                      onChange={(e) => setCurrentPinInput(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
-                    Повторите новый PIN-код:
-                  </label>
-                  <input
-                    type="password"
-                    maxLength={8}
-                    required
-                    placeholder="Повторите новый код"
-                    value={confirmPinInput}
-                    onChange={(e) => setConfirmPinInput(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Новый PIN-код (от 4 до 8 цифр):
+                    </label>
+                    <input
+                      type="password"
+                      maxLength={8}
+                      required
+                      value={newPinInput}
+                      onChange={(e) => setNewPinInput(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
 
-                <div className="flex items-center gap-3 pt-2">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Повторите новый PIN-код:
+                    </label>
+                    <input
+                      type="password"
+                      maxLength={8}
+                      required
+                      value={confirmPinInput}
+                      onChange={(e) => setConfirmPinInput(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+
                   <button
                     type="submit"
-                    className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider cursor-pointer shadow-lg flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider cursor-pointer shadow-lg"
                   >
-                    <Save className="w-4 h-4" />
-                    <span>Сохранить новый PIN</span>
+                    Сохранить новый PIN
                   </button>
+                </form>
 
-                  <button
-                    type="button"
-                    onClick={handleResetToDefaultPin}
-                    className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
-                    title="Сбросить к 1234"
-                  >
-                    Сброс (1234)
-                  </button>
-                </div>
-              </form>
+                {/* Резервный код */}
+                <form onSubmit={handleSaveBackupPin} className="space-y-3 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5 text-slate-200">
+                    <ShieldAlert className="w-4 h-4 text-emerald-400" />
+                    <span>Резервный код восстановления</span>
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    Резервный код позволяет войти в панель в любой момент, если основной PIN забыт.
+                  </p>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      Резервный код:
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={12}
+                      required
+                      value={newBackupPinInput}
+                      onChange={(e) => setNewBackupPinInput(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={handleResetToDefaultPin}
+                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                    >
+                      Сброс настроек
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider cursor-pointer"
+                    >
+                      Обновить резервный
+                    </button>
+                  </div>
+                </form>
+              </div>
             )}
 
           </div>

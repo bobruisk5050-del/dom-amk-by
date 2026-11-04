@@ -206,7 +206,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, initialDa
                   type="text"
                   value={material}
                   onChange={(e) => setMaterial(e.target.value)}
-                  placeholder="OSB-3 12мм, ондулин, профильная труба и т.д."
+                  placeholder="ОСБ-3 12мм, ондулин, профильная труба и т.д."
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500"
                 />
               </div>

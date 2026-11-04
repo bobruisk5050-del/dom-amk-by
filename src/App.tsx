@@ -20,23 +20,20 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   useEffect(() => {
-    // 1. Инициализация автоматической темы (день / ночь + системная)
     const cleanupTheme = initAutoTheme();
 
-    // Если в адресе остался старый хэш #admin или #telegram - просто тихо очищаем его, не открывая панель
     if (window.location.hash === '#admin' || window.location.hash === '#telegram') {
       try {
         window.history.replaceState(null, '', window.location.pathname + window.location.search);
       } catch {
-        // Игнорируем
+        //
       }
     }
 
-    // 3. Кастомное событие для открытия админки (из футера или горячих клавиш)
     const handleOpenAdmin = () => setIsAdminOpen(true);
     window.addEventListener('open_admin_panel', handleOpenAdmin);
 
-    // 4. Горячая комбинация клавиш: Ctrl + Shift + A (или Cmd + Shift + A)
+    // Горячие клавиши Ctrl+Shift+A
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a' || e.key === 'Ф' || e.key === 'ф')) {
         e.preventDefault();
@@ -114,14 +111,12 @@ export default function App() {
         initialData={modalInitialData}
       />
 
-      {/* Полнофункциональная мини-панель управления для владельца */}
       <AdminPanel isOpen={isAdminOpen} onClose={handleCloseAdmin} />
 
-      {/* Уведомление о защите данных и cookie (Закон РБ № 99-З) */}
       <CookieBanner />
 
-      {/* Быстрые действия для смартфонов (звонок, Viber с шаблоном, быстрая заявка) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 p-2 sm:hidden shadow-2xl flex items-center gap-1.5">
+      {/* Мобильная панель быстрого звонка */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 p-2 sm:hidden shadow-2xl flex items-center gap-1.5">
         <a
           href="tel:+375447022533"
           className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md"

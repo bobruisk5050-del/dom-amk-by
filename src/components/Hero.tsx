@@ -28,14 +28,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLeadModal }) => {
           </div>
 
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight mb-4 sm:mb-6">
-            Кровельные материалы, плита OSB-3 и профильная труба{' '}
+            Кровельные материалы, плита ОСБ-3 и профильная труба{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-500">
               в Бобруйске
             </span>
           </h1>
 
           <p className="text-sm sm:text-lg text-slate-300 leading-relaxed mb-6 sm:mb-8 font-normal">
-            Прямые поставки со склада на <b>ул. Орджоникидзе, 349</b> и рынка «Птичка». Влагостойкая плита OSB-3 (ОСБ), металлочерепица, ондулин, трубы для заборов и фасады АМК.
+            Прямые поставки со склада на <b>ул. Орджоникидзе, 349</b> и рынка «Птичка». Влагостойкая плита ОСБ-3, металлочерепица, ондулин, трубы для заборов и фасады АМК.
             <span className="hidden sm:inline"> Доставка по городу и району за 2–4 часа, бесплатная резка труб, оплата водителю при выгрузке.</span>
           </p>
 
@@ -60,7 +60,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLeadModal }) => {
           <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 text-[11px] sm:text-xs text-slate-300 scrollbar-none mb-6 sm:mb-10">
             <span className="font-semibold text-amber-400 whitespace-nowrap">В наличии:</span>
             {[
-              'OSB-3 (9–22мм)',
+              'ОСБ-3 (9–22мм)',
               'Ондулин Smart',
               'Металлочерепица',
               'Труба 40×20 / 60×40',

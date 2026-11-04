@@ -359,7 +359,7 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
                     <input
                       type="text"
                       maxLength={120}
-                      placeholder="Например: 35 листов OSB-3 12мм + 60 метров профильной трубы 40х20"
+                      placeholder="Например: 35 листов ОСБ-3 12мм + 60 метров профильной трубы 40х20"
                       value={material}
                       onChange={(e) => setMaterial(e.target.value)}
                       className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500"

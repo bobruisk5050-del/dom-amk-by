@@ -89,16 +89,16 @@ export const Calculator: React.FC<CalculatorProps> = ({ onOpenLeadModal }) => {
   };
 
   return (
-    <section id="calculator" className="py-10 sm:py-20 bg-slate-900 text-white relative overflow-hidden">
+    <section id="calculator" className="py-8 sm:py-16 bg-slate-900 text-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-3">
+        <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-12">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-2.5">
             <CalcIcon className="w-3.5 h-3.5" />
             Быстрый расчет без лишней воды
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2 sm:mb-4">
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-2 sm:mb-4">
             Калькулятор необходимого объема
           </h2>
           <p className="text-slate-300 text-xs sm:text-base">
@@ -110,14 +110,14 @@ export const Calculator: React.FC<CalculatorProps> = ({ onOpenLeadModal }) => {
         <div className="grid grid-cols-3 gap-2 max-w-xl mx-auto mb-6 sm:mb-10">
           <button
             onClick={() => setMode('osb')}
-            className={`flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 py-2 sm:py-2.5 px-2 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer ${
               mode === 'osb'
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>OSB-3 (ОСБ)</span>
+            <span>ОСБ-3</span>
           </button>
 
           <button
@@ -177,7 +177,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ onOpenLeadModal }) => {
 
                 <div>
                   <label className="block text-xs sm:text-sm font-semibold text-slate-200 mb-2">
-                    Толщина листа OSB-3:
+                    Толщина листа ОСБ-3:
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {[
@@ -309,7 +309,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ onOpenLeadModal }) => {
             )}
 
             <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-700/60 text-[11px] text-slate-300 leading-snug">
-              💡 <b>Склад в Бобруйске:</b> неиспользованные целые листы OSB-3 или профильную трубу без резки принимаем обратно с возвратом средств!
+              💡 <b>Склад в Бобруйске:</b> неиспользованные целые листы ОСБ-3 или профильную трубу без резки принимаем обратно с возвратом средств!
             </div>
           </div>
 
@@ -328,7 +328,7 @@ export const Calculator: React.FC<CalculatorProps> = ({ onOpenLeadModal }) => {
               {mode === 'osb' && (
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-300">Плита OSB-3 (2500×1250):</span>
+                    <span className="text-xs text-slate-300">Плита ОСБ-3 (2500×1250):</span>
                     <span className="text-lg font-bold text-amber-400">{osbSheetsNeeded} листов</span>
                   </div>
                   <div className="text-[11px] text-slate-400">
