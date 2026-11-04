@@ -130,7 +130,10 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, initialDa
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer select-none"
+      onClick={onClose}
+    >
       <div
         className="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-5 sm:p-7 shadow-2xl text-white overflow-hidden max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}

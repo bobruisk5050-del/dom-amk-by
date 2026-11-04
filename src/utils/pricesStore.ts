@@ -1,5 +1,5 @@
 export interface WarehouseSettings {
-  // Плиты OSB-3 влагостойкие (цена за 1 лист, BYN)
+  // Плиты ОСБ-3 влагостойкие (цена за 1 лист, BYN)
   osb9: number;
   osb12: number;
   osb15: number;
@@ -44,8 +44,6 @@ export const DEFAULT_SETTINGS: WarehouseSettings = {
 };
 
 const STORAGE_KEY = 'dom_amk_warehouse_settings';
-const PIN_STORAGE_KEY = 'dom_amk_admin_pin';
-const BACKUP_PIN_STORAGE_KEY = 'dom_amk_backup_pin';
 
 export function getWarehouseSettings(): WarehouseSettings {
   if (typeof window === 'undefined') return DEFAULT_SETTINGS;
@@ -75,87 +73,4 @@ export function resetWarehouseSettings(): WarehouseSettings {
     window.dispatchEvent(new Event('dom_amk_settings_updated'));
   }
   return DEFAULT_SETTINGS;
-}
-
-export function getAdminPin(): string {
-  if (typeof window === 'undefined') return '1234';
-  try {
-    const customPin = localStorage.getItem(PIN_STORAGE_KEY);
-    return customPin && customPin.trim().length >= 4 ? customPin.trim() : '1234';
-  } catch {
-    return '1234';
-  }
-}
-
-export function hasCustomPin(): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    const custom = localStorage.getItem(PIN_STORAGE_KEY);
-    return Boolean(custom && custom.trim().length >= 4);
-  } catch {
-    return false;
-  }
-}
-
-export function getBackupPin(): string {
-  if (typeof window === 'undefined') return '7022533';
-  try {
-    const stored = localStorage.getItem(BACKUP_PIN_STORAGE_KEY);
-    return stored && stored.trim().length >= 4 ? stored.trim() : '7022533';
-  } catch {
-    return '7022533';
-  }
-}
-
-export function setBackupPin(newBackupPin: string): boolean {
-  if (typeof window === 'undefined') return false;
-  const cleaned = newBackupPin.trim();
-  if (cleaned.length < 4 || cleaned.length > 12) return false;
-  try {
-    localStorage.setItem(BACKUP_PIN_STORAGE_KEY, cleaned);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function setAdminPin(newPin: string): boolean {
-  if (typeof window === 'undefined') return false;
-  const cleaned = newPin.trim();
-  if (cleaned.length < 4 || cleaned.length > 8) return false;
-  try {
-    localStorage.setItem(PIN_STORAGE_KEY, cleaned);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function verifyAdminPin(enteredPin: string): boolean {
-  const entered = enteredPin.trim();
-  if (!entered) return false;
-
-  const currentPin = getAdminPin();
-  const backupPin = getBackupPin();
-  const isCustom = hasCustomPin();
-
-  // Если владелец установил свой собственный PIN:
-  // работает ТОЛЬКО его новый PIN или установленный резервный PIN. Код 1234 больше НЕ работает!
-  if (isCustom) {
-    return entered === currentPin || entered === backupPin;
-  }
-
-  // Если свой PIN еще не меняли:
-  // работает начальный код 1234 или резервный
-  return entered === '1234' || entered === backupPin;
-}
-
-export function resetAdminPin(): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.removeItem(PIN_STORAGE_KEY);
-    localStorage.removeItem(BACKUP_PIN_STORAGE_KEY);
-  } catch {
-    //
-  }
 }
