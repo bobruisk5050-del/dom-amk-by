@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Базовые цвета для плавного переключения светлой и тёмной темы */
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #020617; /* slate-950 */
+  color: #f8fafc; /* slate-50 */
+}
+
+/* Плавный переход фона при смене времени суток */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

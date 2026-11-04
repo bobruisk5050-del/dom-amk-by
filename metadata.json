@@ -1,0 +1,6 @@
+{
+  "name": "СтройКровля — Продажа кровельных материалов",
+  "description": "Современный продающий лендинг кровельных и стройматериалов: ОСП-3, черепица, ондулин, профильные трубы, экспресс-калькулятор и лидогенерация в Telegram.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
