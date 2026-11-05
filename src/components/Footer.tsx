@@ -1,5 +1,6 @@
 import React from 'react';
 import { Phone, Mail, MapPin, Clock, ArrowUp, Lock } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -14,8 +15,8 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand & Bio */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500 text-slate-950 font-black flex items-center justify-center text-base">
-                ДК
+              <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-1.5 flex-shrink-0 shadow-xs">
+                <BrandLogo className="w-full h-full" />
               </div>
               <div>
                 <span className="font-extrabold text-white text-base block tracking-tight">

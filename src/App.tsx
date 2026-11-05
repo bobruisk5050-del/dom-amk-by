@@ -10,6 +10,7 @@ import { Footer } from './components/Footer';
 import { LeadModal } from './components/LeadModal';
 import { AdminPanel } from './components/AdminPanel';
 import { CookieBanner } from './components/CookieBanner';
+import { ScrollToTop } from './components/ScrollToTop';
 import { LeadPayload } from './services/telegram';
 import { initAutoTheme } from './utils/theme';
 import { Phone, MessageSquare } from 'lucide-react';
@@ -114,6 +115,7 @@ export default function App() {
       <AdminPanel isOpen={isAdminOpen} onClose={handleCloseAdmin} />
 
       <CookieBanner />
+      <ScrollToTop />
 
       {/* Мобильная панель быстрого звонка */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 p-2 sm:hidden shadow-2xl flex items-center gap-1.5">

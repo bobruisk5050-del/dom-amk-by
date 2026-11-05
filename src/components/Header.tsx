@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, MapPin, Menu, X, ChevronRight } from 'lucide-react';
 import { getWarehouseStatus } from '../utils/workingHours';
+import { BrandLogo } from './BrandLogo';
 
 interface HeaderProps {
   onOpenLeadModal: () => void;
@@ -49,12 +50,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenLeadModal }) => {
           
           {/* Логотип компании */}
           <a href="#" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-slate-950 to-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 shadow-xs group-hover:border-amber-500/50 transition-all flex-shrink-0">
-              <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <path d="M9 21V12h6v9" />
-                <path d="M14 6l4 3.5" />
-              </svg>
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center p-1.5 sm:p-2 shadow-xs group-hover:border-amber-500/50 transition-all flex-shrink-0">
+              <BrandLogo className="w-full h-full" />
             </div>
             <div>
               <div className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors leading-none mb-1">
