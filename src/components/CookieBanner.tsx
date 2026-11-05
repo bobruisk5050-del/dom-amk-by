@@ -47,7 +47,7 @@ export const CookieBanner: React.FC = () => {
       {/* Компактная плашка внизу экрана */}
       <aside
         aria-label="Уведомление о cookie"
-        className="fixed bottom-3 left-3 right-3 sm:left-auto sm:right-4 z-40 sm:max-w-lg bg-slate-900/95 text-slate-200 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3 sm:py-2.5 sm:px-4 shadow-2xl text-xs transition-all animate-in slide-in-from-bottom duration-300"
+        className="fixed bottom-3 left-3 right-3 sm:left-auto sm:right-4 z-50 sm:max-w-lg bg-slate-900 text-slate-200 border border-slate-700/90 rounded-2xl p-3 sm:py-2.5 sm:px-4 shadow-2xl text-xs transition-all animate-in slide-in-from-bottom duration-200"
       >
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">

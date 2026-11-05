@@ -13,7 +13,6 @@ import { CookieBanner } from './components/CookieBanner';
 import { ScrollToTop } from './components/ScrollToTop';
 import { LeadPayload } from './services/telegram';
 import { initAutoTheme } from './utils/theme';
-import { Phone, MessageSquare } from 'lucide-react';
 
 export default function App() {
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -92,7 +91,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 pb-14 sm:pb-0 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-amber-500 selection:text-slate-950 transition-colors duration-300">
       <Header onOpenLeadModal={() => handleOpenLeadModal({ source: 'Кнопка в шапке сайта' })} />
 
       <main>
@@ -116,33 +115,6 @@ export default function App() {
 
       <CookieBanner />
       <ScrollToTop />
-
-      {/* Мобильная панель быстрого звонка */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 p-2 sm:hidden shadow-2xl flex items-center gap-1.5">
-        <a
-          href="tel:+375447022533"
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md"
-        >
-          <Phone className="w-4 h-4" />
-          <span>Позвонить</span>
-        </a>
-
-        <a
-          href="viber://chat?number=%2B375447022533&draft=Здравствуйте!+Интересуют+стройматериалы+со+склада+в+Бобруйске"
-          className="px-3 py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center flex-shrink-0"
-          title="Написать в Viber с готовым вопросом"
-        >
-          <span>Viber</span>
-        </a>
-
-        <button
-          onClick={() => handleOpenLeadModal({ source: 'Плавающая мобильная кнопка' })}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold text-xs uppercase tracking-wider shadow-md cursor-pointer"
-        >
-          <MessageSquare className="w-4 h-4 text-amber-400" />
-          <span>Заявка</span>
-        </button>
-      </div>
     </div>
   );
 }

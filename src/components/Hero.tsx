@@ -15,7 +15,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLeadModal }) => {
         <img
           src={heroDepotImg}
           alt="Склад кровельных материалов и OSB-3 в Бобруйске"
-          className="w-full h-full object-cover object-right md:object-center opacity-35 transform scale-105"
+          className="w-full h-full object-cover object-right md:object-center opacity-30"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
