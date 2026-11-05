@@ -21,8 +21,8 @@ export interface SendLeadResult {
   previewText?: string;
 }
 
-export const TELEGRAM_STORAGE_KEY_TOKEN = '9219696978:AAEnVcq4GSpuLnlDUYHb9xyU_dw9ATK2gfs';
-export const TELEGRAM_STORAGE_KEY_CHAT_ID = '785696987';
+export const TELEGRAM_STORAGE_KEY_TOKEN = 'dom_amk_tg_token';
+export const TELEGRAM_STORAGE_KEY_CHAT_ID = 'dom_amk_tg_chat_id';
 
 export function getTelegramConfig(): { token: string; chatId: string } {
   // 1. Из переменных окружения (Netlify, Vercel, .env)

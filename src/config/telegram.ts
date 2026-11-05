@@ -11,9 +11,9 @@
  */
 
 export const DEFAULT_TELEGRAM_CONFIG = {
-  // Токен бота от @BotFather (например: '7689123456:AAFd...')
-  botToken: '',
+  // Токен бота от @BotFather
+  botToken: '9219696978:AAEnVcq4GSpuLnlDUYHb9xyU_dw9ATK2gfs',
 
-  // Ваш числовой ID чата (например: '123456789')
-  chatId: '',
+  // Ваш числовой ID чата
+  chatId: '785696987',
 };
