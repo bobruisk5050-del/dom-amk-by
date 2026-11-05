@@ -139,34 +139,6 @@ export async function sendLeadToTelegram(lead: LeadPayload): Promise<SendLeadRes
     //
   }
 
-  // 1. Попытка отправки через защищенную серверную функцию Netlify (без утечки токена в F12 DevTools!)
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-    try {
-      const netlifyRes = await fetch('/.netlify/functions/telegram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          chatId,
-          text: messageText,
-        }),
-      });
-
-      if (netlifyRes.ok) {
-        const netlifyData = await netlifyRes.json();
-        if (netlifyData.ok) {
-          return {
-            success: true,
-            isSimulated: false,
-            message: 'Заявка принята! Менеджер свяжется с вами в течение 10–15 минут.',
-            previewText: messageText,
-          };
-        }
-      }
-    } catch {
-      // При отсутствии Netlify Functions продолжаем отправку напрямую
-    }
-  }
 
   // 2. Если токен или chat_id отсутствуют в конфигурации
   if (!token || !chatId) {
