@@ -140,9 +140,9 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
                 <span className="px-2.5 py-1 rounded-md bg-amber-500 text-slate-950 font-black text-[11px] uppercase tracking-wider">
                   Основной склад и база
                 </span>
-                <span className="text-[11px] font-semibold flex items-center gap-1">
-                  <span className={`w-2 h-2 rounded-full ${whStatus.dotColor} animate-pulse`} />
-                  <span className={whStatus.isOpen ? 'text-emerald-400' : 'text-amber-300'}>
+                <span className="text-[11px] font-semibold flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${whStatus.dotColor} ring-2 ring-emerald-500/20`} />
+                  <span className={whStatus.isOpen ? 'text-emerald-400 font-medium' : 'text-amber-400 font-medium'}>
                     {whStatus.isOpen ? 'Сейчас открыт' : 'Сейчас закрыт'}
                   </span>
                 </span>
@@ -167,7 +167,7 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
 
                 <div className="flex items-center gap-2.5">
                   <Phone className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <a href="tel:+375447022533" className="font-bold text-white hover:text-amber-400 transition-colors text-sm sm:text-base">
+                  <a href="tel:+375447022533" className="font-bold text-white hover:text-amber-400 transition-colors text-sm sm:text-base tabular-nums">
                     +375 (44) 702-25-33 (A1)
                   </a>
                 </div>
@@ -194,9 +194,9 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
                 <span className="px-2.5 py-1 rounded-md bg-slate-700 text-slate-200 font-bold text-[11px] uppercase tracking-wider">
                   Торговая точка (рынок)
                 </span>
-                <span className="text-[11px] font-semibold flex items-center gap-1">
-                  <span className={`w-2 h-2 rounded-full ${pavStatus.dotColor} animate-pulse`} />
-                  <span className={pavStatus.isOpen ? 'text-emerald-400' : 'text-slate-300'}>
+                <span className="text-[11px] font-semibold flex items-center gap-1.5">
+                  <span className={`w-2 h-2 rounded-full ${pavStatus.dotColor} ring-2 ring-emerald-500/20`} />
+                  <span className={pavStatus.isOpen ? 'text-emerald-400 font-medium' : 'text-slate-400 font-medium'}>
                     {pavStatus.isOpen ? 'Сейчас открыт' : 'Сейчас закрыт'}
                   </span>
                 </span>

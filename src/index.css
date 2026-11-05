@@ -4,11 +4,20 @@
 
 :root {
   color-scheme: light;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 html.dark {
@@ -21,19 +30,35 @@ html.dark body {
 }
 
 body {
-  transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
-/* Оптимизация производительности и плавности скролла на смартфонах */
+/* Изоляция отрисовки секций (CSS Containment) для исключения просадок FPS при скролле */
+section {
+  contain: layout style paint;
+}
+
+/* Чистые моноширинные цифры для всех цен и параметров */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Оптимизация производительности для мобильных устройств (iOS и Android) */
 @media (max-width: 768px) {
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  
-  /* Отключаем ресурсоёмкие фильтры размытия на мобильных для стабильных 60-120 FPS */
+
+  /* Отключаем ресурсоёмкие фильтры размытия на мобильных для ультраплавного скролла */
   [class*="backdrop-blur"] {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+
+  /* Отключаем циклические GPU-анимации на мобильных, чтобы батарея не грелась и не лагал скролл */
+  .animate-pulse {
+    animation: none !important;
+  }
 }
+

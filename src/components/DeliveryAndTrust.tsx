@@ -21,20 +21,25 @@ export const DeliveryAndTrust: React.FC = () => {
         </div>
 
         {/* 3 варианта доставки */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mb-8 sm:mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
           
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-7 relative flex flex-col justify-between shadow-xs">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-6 relative flex flex-col justify-between shadow-xs">
             <div>
-              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-base sm:text-lg mb-3 sm:mb-4">
-                1
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-500">
+                  Вариант 01
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                  Популярный
+                </span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2">
                 Маневренная Газель 4.2 м
               </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
+              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
                 Идеально для дач и частного сектора. Вмещает до 60 листов ОСБ-3, профильные трубы до 4 метров и доборы.
               </p>
-              <ul className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+              <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                   <span>Подача по городу в течение 2–3 часов</span>
@@ -45,23 +50,25 @@ export const DeliveryAndTrust: React.FC = () => {
                 </li>
               </ul>
             </div>
-            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-800 text-[10px] sm:text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
-              Самый популярный вариант
-            </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-7 relative flex flex-col justify-between shadow-xs">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-6 relative flex flex-col justify-between shadow-xs">
             <div>
-              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-base sm:text-lg mb-3 sm:mb-4">
-                2
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-400">
+                  Вариант 02
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  Крупный объём
+                </span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2">
                 Манипулятор / Длинномер
               </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
+              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
                 Для крупных строек, 6-метровых труб, целых заводских поддонов ОСБ-3 и длинных листов черепицы.
               </p>
-              <ul className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+              <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                   <span>Механизированная выгрузка стрелой</span>
@@ -72,23 +79,25 @@ export const DeliveryAndTrust: React.FC = () => {
                 </li>
               </ul>
             </div>
-            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-800 text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              Для оптовых заказов
-            </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-7 relative flex flex-col justify-between shadow-xs">
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-6 relative flex flex-col justify-between shadow-xs">
             <div>
-              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-base sm:text-lg mb-3 sm:mb-4">
-                3
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-500">
+                  Вариант 03
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                  Бесплатно
+                </span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 sm:mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2">
                 Самовывоз со склада (0 руб.)
               </h3>
-              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
+              <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
                 Приезжайте на личном авто или прицепе. Склад оборудован удобным асфальтированным подъездом.
               </p>
-              <ul className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
+              <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                   <span>Бесплатная погрузка кладовщиками</span>
@@ -98,9 +107,6 @@ export const DeliveryAndTrust: React.FC = () => {
                   <span>Бесплатная резка трубы под багажник</span>
                 </li>
               </ul>
-            </div>
-            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-200 dark:border-slate-800 text-[10px] sm:text-[11px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
-              ул. Орджоникидзе, 349
             </div>
           </div>
 
