@@ -25,7 +25,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Плита OSB-3 (ОСБ) влагостойкая Kronospan',
     category: 'osb',
     categoryLabel: 'OSB-3 (ОСБ) плита',
-    image: '/images/osb_boards.jpg',
+    image: './images/osb_boards.jpg',
     badge: 'Хит продаж',
     shortDesc: 'Ориентированно-стружечная влагостойкая плита повышенной прочности для сплошного настила кровли, каркасных стен, перегородок и черновых полов.',
     specs: [
@@ -45,7 +45,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Металлочерепица «Монтеррей» и «Нордик» (0.45 / 0.5 мм)',
     category: 'roofing',
     categoryLabel: 'Кровельные материалы',
-    image: '/images/roofing_tiles.jpg',
+    image: './images/roofing_tiles.jpg',
     badge: 'Гарантия до 25 лет',
     shortDesc: 'Классическая металлочерепица с защитным цинковым слоем и полимерным матовым/глянцевым покрытием (RAL 7024 графит, RAL 8017 шоколад, RAL 3005 вишня, RAL 6005 зеленый мох).',
     specs: [
@@ -64,7 +64,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Еврошифер Ондулин Smart (Onduline)',
     category: 'roofing',
     categoryLabel: 'Кровельные материалы',
-    image: '/images/roofing_tiles.jpg',
+    image: './images/roofing_tiles.jpg',
     badge: 'Легкий монтаж',
     shortDesc: 'Оригинальный битумный волнистый лист с «умным» замком Smart Lock. Не шумит во время дождя, легкий вес (не перегружает стропила), не ржавеет и не конденсирует влагу.',
     specs: [
@@ -83,7 +83,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Труба профильная стальная (квадратная и прямоугольная)',
     category: 'pipes',
     categoryLabel: 'Профильная труба',
-    image: '/images/profile_pipes.jpg',
+    image: './images/profile_pipes.jpg',
     badge: 'Резка в размер',
     shortDesc: 'Горячекатаная и холоднокатаная профильная труба для изготовления заборов, ворот, калиток, навесов, теплиц и кровельных ферм. Бесплатная резка для удобной перевозки!',
     specs: [
@@ -102,7 +102,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Фасадная декоративная система АМК (кирпич на сетке)',
     category: 'facade',
     categoryLabel: 'Фасады АМК',
-    image: '/images/facade_amk.jpg',
+    image: './images/facade_amk.jpg',
     badge: 'Оригинал АМК',
     shortDesc: 'Инновационное покрытие из натуральной мраморной крошки на армирующей стеклосетке. Монтируется на клей для утеплителя на любые поверхности: газосиликат, пенопласт, минвату, ОСБ, гипсокартон.',
     specs: [
@@ -121,7 +121,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Профнастил оцинкованный и полимерный (С-8, МП-20)',
     category: 'roofing',
     categoryLabel: 'Кровельные материалы',
-    image: '/images/roofing_tiles.jpg',
+    image: './images/roofing_tiles.jpg',
     badge: 'Для крыши и забора',
     shortDesc: 'Профилированный лист для заборов, фасадов и кровли. Жесткая геометрия волны, стойкое защитное антикоррозийное полимерное покрытие с обеих сторон.',
     specs: [
@@ -140,7 +140,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Кровельные диффузионные мембраны и пленки Ютавек / Технониколь',
     category: 'insulation',
     categoryLabel: 'Изоляция и мембраны',
-    image: '/images/hero_depot.jpg',
+    image: './images/hero_depot.jpg',
     badge: 'Европейское качество',
     shortDesc: 'Трехслойные супердиффузионные ветро-влагозащитные мембраны и пароизоляционные пленки для защиты утеплителя и деревянных стропил от влаги, пара и выдувания тепла.',
     specs: [
@@ -159,7 +159,7 @@ export const CATALOG_PRODUCTS: Product[] = [
     title: 'Водосточные системы (пластиковые и металлические)',
     category: 'drainage',
     categoryLabel: 'Водосточные системы',
-    image: '/images/roofing_tiles.jpg',
+    image: './images/roofing_tiles.jpg',
     badge: 'Полный комплект',
     shortDesc: 'Надежные водостоки Döcke и металл с глубоким желобом. Предотвращают размывание фундамента и намокание фасада. Полный комплект: желоба, трубы, воронки, колена, кронштейны.',
     specs: [

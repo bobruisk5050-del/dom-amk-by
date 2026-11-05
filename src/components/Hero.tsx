@@ -12,7 +12,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenLeadModal }) => {
       {/* Фоновое изображение склада */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/images/hero_depot.jpg"
+          src="./images/hero_depot.jpg"
           alt="Склад кровельных материалов и OSB-3 в Бобруйске"
           className="w-full h-full object-cover object-center opacity-30 transform scale-105"
         />

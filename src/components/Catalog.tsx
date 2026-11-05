@@ -176,7 +176,7 @@ export const Catalog: React.FC<CatalogProps> = ({ onOpenLeadModal }) => {
                   {/* Изображение товара */}
                   <div className="relative aspect-[16/9] sm:aspect-[4/3] bg-slate-100 dark:bg-slate-900 overflow-hidden">
                     <img
-                      src={product.image}
+                      src={product.image.startsWith('/') ? `.${product.image}` : product.image}
                       alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
