@@ -28,14 +28,19 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
   const [whStatus, setWhStatus] = useState(() => getWarehouseStatus());
   const [pavStatus, setPavStatus] = useState(() => getPavilionStatus());
 
-  const nightInfo = checkNightMode();
-  const [preferredCallTime, setPreferredCallTime] = useState(nightInfo.isNight ? nightInfo.defaultCallTime : '');
-  const [showTimePicker, setShowTimePicker] = useState(nightInfo.isNight);
+  const [nightInfo, setNightInfo] = useState(() => checkNightMode());
+  const [preferredCallTime, setPreferredCallTime] = useState(() => checkNightMode().isNight ? checkNightMode().defaultCallTime : '');
+  const [showTimePicker, setShowTimePicker] = useState(() => checkNightMode().isNight);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setWhStatus(getWarehouseStatus());
       setPavStatus(getPavilionStatus());
+      const currentNight = checkNightMode();
+      setNightInfo(currentNight);
+      if (currentNight.isNight) {
+        setShowTimePicker(true);
+      }
     }, 60000);
     return () => clearInterval(timer);
   }, []);
@@ -96,7 +101,7 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
       if (nightInfo.isNight && res.success) {
         setSubmitResult({
           success: true,
-          message: `Заявка принята! Сейчас склад на ночной паузе. Менеджер свяжется с вами утром (${preferredCallTime || 'после 09:00'}).`,
+          message: `Заявка успешно принята! Сейчас склад закрыт (нерабочее время). Менеджер свяжется с вами ${preferredCallTime || nightInfo.defaultCallTime}.`,
         });
       } else {
         setSubmitResult(res);
@@ -315,6 +320,20 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-3">
+                  {nightInfo.isNight && (
+                    <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
+                      <span className="text-base leading-none mt-0.5 select-none">🌙</span>
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-bold text-amber-400 leading-tight">
+                          {nightInfo.title}
+                        </div>
+                        <div className="text-[11px] text-slate-300 leading-relaxed">
+                          {nightInfo.message}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {errorMessage && (
                     <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2">
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -387,24 +406,24 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
 
                   {/* Ночной режим или выбор времени звонка */}
                   {nightInfo.isNight ? (
-                    <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-2">
-                      <div className="flex items-center gap-1.5 text-amber-400 text-xs font-bold">
-                        <span>🌙</span>
-                        <span>Склад сейчас на ночной паузе (откроется в 09:00)</span>
+                    <div className="p-3 rounded-2xl bg-slate-950/90 border border-amber-500/30 space-y-2">
+                      <div className="flex items-center justify-between text-xs font-bold text-amber-400">
+                        <span className="flex items-center gap-1.5">
+                          <span>⏰</span>
+                          <span>Во сколько вам удобно принять звонок:</span>
+                        </span>
+                        <span className="text-[10px] font-semibold text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">онлайн 24/7</span>
                       </div>
-                      <p className="text-[11px] text-slate-300 leading-relaxed">
-                        Заявки принимаем круглосуточно. Во сколько вам перезвонить утром?
-                      </p>
-                      <div className="grid grid-cols-2 gap-1.5 pt-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
                         {nightInfo.timeOptions.map((opt) => (
                           <button
                             type="button"
                             key={opt}
                             onClick={() => setPreferredCallTime(opt)}
-                            className={`px-2 py-1.5 rounded-lg text-[11px] text-left transition-colors cursor-pointer border ${
+                            className={`px-2.5 py-2 rounded-xl text-[11px] text-left font-medium transition-colors cursor-pointer border ${
                               preferredCallTime === opt
-                                ? 'bg-amber-500 text-slate-950 border-amber-400 font-bold'
-                                : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-600'
+                                ? 'bg-amber-500 text-slate-950 border-amber-400 font-bold shadow-xs'
+                                : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-slate-600'
                             }`}
                           >
                             {opt}

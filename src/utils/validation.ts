@@ -29,11 +29,9 @@ export const SPAM_PHRASE_PATTERNS: RegExp[] = [
   /варианты\s+поиска/i,
   /контакты\s+и\s+имена/i,
   /социальные\s+сети/i,
-  /автомобили/i,
-  /фотографии/i,
-  /пробив/i,
+  /пробив(\s+по|\s+баз|\b)/i,
   /osint/i,
-  /баз[аы]\s+данных/i,
+  /баз[аы]\s+данных\s+(гибдд|мвд|номеров|телефонов|паспортов)/i,
   /слив\s+(данных|баз|фото)/i,
   /телефонн[ыо][ей]\s+справочник/i,
   /rokie/i,
@@ -48,8 +46,8 @@ export const SPAM_PHRASE_PATTERNS: RegExp[] = [
 
 // 2. Ссылки, протоколы и упоминания чужих ботов/каналов
 export const SPAM_LINK_PATTERNS: RegExp[] = [
-  /t\.me\//i,
-  /telegram\.me\//i,
+  /t\.me\/[a-zA-Z0-9_]+/i,
+  /telegram\.me\/[a-zA-Z0-9_]+/i,
   /tg:\/\/resolve/i,
   /@[\w_]+bot\b/i,
   /https?:\/\//i,
@@ -60,15 +58,70 @@ export const SPAM_LINK_PATTERNS: RegExp[] = [
   /\.click\b/i,
 ];
 
-// 3. Подозрительные пары ключевых слов (комбинации рекламы сервисов)
+// 3. Подозрительные пары ключевых слов (комбинации рекламы ботов)
 const SUSPICIOUS_PAIRS: [RegExp, RegExp][] = [
   [/бот/i, /поиск/i],
   [/бот/i, /бесплатн/i],
-  [/поиск/i, /контакт/i],
-  [/поиск/i, /авто/i],
   [/бот/i, /telegram|телеграм/i],
   [/запуск/i, /бот/i],
   [/канал/i, /подпис/i],
+];
+
+// 4. Белый список строительных и доставочных терминов (Бобруйск, стройматериалы)
+// Если клиент пишет эти слова — заявка ни в коем случае НЕ блокируется
+const CONSTRUCTION_AND_DELIVERY_WHITELIST: RegExp[] = [
+  /доставк/i,
+  /довез/i,
+  /привез/i,
+  /бобруйск/i,
+  /осипович/i,
+  /кировск/i,
+  /глуск/i,
+  /кличев/i,
+  /минск/i,
+  /могилев/i,
+  /орджоникидзе/i,
+  /птичк/i,
+  /склад/i,
+  /самовывоз/i,
+  /кровл/i,
+  /крыш/i,
+  /осб/i,
+  /\bosb\b/i,
+  /ондулин/i,
+  /черепиц/i,
+  /металлочерепиц/i,
+  /профнастил/i,
+  /профлист/i,
+  /профтруб/i,
+  /труб/i,
+  /водосток/i,
+  /сайдинг/i,
+  /амк/i,
+  /фасад/i,
+  /забор/i,
+  /конек/i,
+  /саморез/i,
+  /утеплител/i,
+  /пленк/i,
+  /смет/i,
+  /расчет/i,
+  /купить/i,
+  /заказ/i,
+  /наличи/i,
+  /манипулятор/i,
+  /машин/i,
+  /автомобил/i,
+  /газел/i,
+  /прицеп/i,
+  /бус/i,
+  /транспорт/i,
+  /разгрузк/i,
+  /подъезд/i,
+  /улиц/i,
+  /дом/i,
+  /дача/i,
+  /деревн/i,
 ];
 
 // Шаблоны тестовых и фейковых номеров
@@ -103,12 +156,13 @@ function isAggressiveAllCaps(text: string): boolean {
   if (letters.length < 25) return false;
 
   const upper = text.replace(/[^A-ZА-ЯЁ]/g, '').length;
-  return upper / letters.length >= 0.65;
+  return upper / letters.length >= 0.70;
 }
 
 /**
  * Максимально надежная проверка на спам от Telegram-ботов и рекламных рассылок.
- * Поддерживает передачу строки, массива строк или целого объекта заявки (LeadPayload).
+ * Гарантирует, что реальные клиенты с адресами доставки («Доставка по Бобруйску» и т.п.)
+ * никогда не попадут под блокировку.
  */
 export function isTelegramBotSpam(input: unknown, ...additionalFields: unknown[]): boolean {
   if (!input) return false;
@@ -135,24 +189,35 @@ export function isTelegramBotSpam(input: unknown, ...additionalFields: unknown[]
   const clean = combined.trim();
   if (!clean) return false;
 
+  // Проверяем, есть ли строительный или доставочный контекст клиента
+  const isClientOrder = CONSTRUCTION_AND_DELIVERY_WHITELIST.some((pattern) => pattern.test(clean));
+
+  // Если это клиентский заказ (доставка, Бобруйск, ОСБ, трубы, кровля и т.д.):
+  // Блокируем ТОЛЬКО если есть прямая ссылка на Telegram-бота или явный промо-код спам-бота
+  if (isClientOrder) {
+    const hasSpamBotLinks = SPAM_LINK_PATTERNS.some((p) => p.test(clean));
+    const hasSpamBotPhrases = /поисков[оы]й\s+бот|запустить\s+бот|rokie|post[\s_-]*automation|глаз\s*бога|osint|детонатор/i.test(clean);
+    return hasSpamBotLinks || hasSpamBotPhrases;
+  }
+
   // 1. Проверка прямых спам-фраз
   for (const pattern of SPAM_PHRASE_PATTERNS) {
     if (pattern.test(clean)) return true;
   }
 
-  // 2. Проверка ссылок на Telegram-боты, каналы и сторонние сайты
+  // 2. Проверка ссылок на сторонние Telegram-боты, каналы и сайты
   for (const pattern of SPAM_LINK_PATTERNS) {
     if (pattern.test(clean)) return true;
   }
 
-  // 3. Проверка агрессивного ALL-CAPS спама
+  // 3. Проверка агрессивного ALL-CAPS спама рекламных ботов
   if (isAggressiveAllCaps(clean)) {
-    if (/бот|telegram|тг|поиск|бесплатн|канал|жми|ссылк|кнопк|баз[аы]|слив/i.test(clean)) {
+    if (/поисков[оы]й|бот|telegram|тг|канал|жми|ссылк|кнопк|баз[аы]|слив/i.test(clean)) {
       return true;
     }
   }
 
-  // 4. Проверка подозрительных комбинаций
+  // 4. Проверка подозрительных пар (бот + поиск, бот + бесплатно и т.д.)
   for (const [r1, r2] of SUSPICIOUS_PAIRS) {
     if (r1.test(clean) && r2.test(clean)) {
       return true;
@@ -162,16 +227,21 @@ export function isTelegramBotSpam(input: unknown, ...additionalFields: unknown[]
   return false;
 }
 
-// Проверка на бессмысленный набор букв, случайные нажатия клавиатуры и спам
+// Проверка на бессмысленный набор букв, случайные нажатия клавиатуры
 export function isGibberish(text: string): boolean {
   if (!text) return false;
   const clean = text.trim();
   if (clean.length === 0) return false;
 
-  // 1. Повторение одного и того же символа 3+ раза (например: ааа, жжжжж, 111)
-  if (/(.)\1{2,}/i.test(clean)) return true;
+  // Если в тексте есть нормальные слова (например, «ул.», «д.», «Бобруйск», «доставка»), это не бессмыслица
+  if (CONSTRUCTION_AND_DELIVERY_WHITELIST.some((p) => p.test(clean))) {
+    return false;
+  }
 
-  // 2. Классические клавиатурные проходы (русская и английская раскладка)
+  // 1. Повторение одного и того же символа 4+ раза (например: аааа, жжжжж)
+  if (/(.)\1{3,}/i.test(clean)) return true;
+
+  // 2. Классические клавиатурные проходы
   const keyboardPasses = [
     /фыва/i, /ывап/i, /вапр/i, /апро/i, /прол/i, /ролд/i, /олдж/i, /ждло/i,
     /йцук/i, /цуке/i, /укен/i, /кенг/i, /енгш/i, /нгшщ/i, /гшщз/i, /шщзх/i,
@@ -183,16 +253,13 @@ export function isGibberish(text: string): boolean {
   ];
   if (keyboardPasses.some((p) => p.test(clean))) return true;
 
-  // 3. Отсутствие гласных букв в словах длиннее 3 символов (например: фывп, бвгдж, hjkl)
+  // 3. Отсутствие гласных букв в словах длиннее 4 символов (например: фывп, бвгдж, hjkl)
   const words = clean.split(/[\s,.-]+/);
   for (const word of words) {
-    if (word.length >= 4 && !/[аеёиоуыэюяaeiouy]/i.test(word) && !/^\d+$/.test(word)) {
+    if (word.length >= 5 && !/[аеёиоуыэюяaeiouy]/i.test(word) && !/^\d+$/.test(word)) {
       return true;
     }
   }
-
-  // 4. Слишком много согласных подряд (более 4 без гласных и пробелов)
-  if (/[^аеёиоуыэюяaeiouy\s\d\-.,_]{5,}/i.test(clean)) return true;
 
   return false;
 }
@@ -220,7 +287,7 @@ export interface ValidationResult {
   isValid: boolean;
   errorMessage?: string;
   fullPhone?: string;
-  rawPhone?: string; // e.g. +375291234567 for 1-tap dial
+  rawPhone?: string;
 }
 
 // Проверка 9 цифр белорусского номера (строго реальные операторы Беларуси)
@@ -260,7 +327,7 @@ export function validateLocalBelarusDigits(formattedOrRaw: string): ValidationRe
   };
 }
 
-// Защита от спама: не более 1 заявки за 60 секунд
+// Защита от случайного дабл-клика (пауза 5 секунд)
 const LAST_SUBMIT_KEY = 'dom_amk_last_lead_ts';
 
 export function checkRateLimit(): { allowed: boolean; waitSeconds?: number } {
@@ -272,9 +339,8 @@ export function checkRateLimit(): { allowed: boolean; waitSeconds?: number } {
     const now = Date.now();
     const diff = Math.floor((now - last) / 1000);
 
-    // Возвращено 60 секунд для боевого режима
-    if (diff < 60) {
-      return { allowed: false, waitSeconds: 60 - diff };
+    if (diff < 5) {
+      return { allowed: false, waitSeconds: 5 - diff };
     }
   } catch {
     // игнорируем
