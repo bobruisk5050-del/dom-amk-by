@@ -6,6 +6,7 @@ import {
   validateLocalBelarusDigits,
   containsProfanity,
   isGibberish,
+  isTelegramBotSpam,
   checkRateLimit,
   recordSubmitTimestamp,
 } from '../utils/validation';
@@ -92,6 +93,10 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, initialDa
     }
     if (material && (containsProfanity(material) || isGibberish(material))) {
       setErrorMessage('Пожалуйста, укажите понятное наименование материала.');
+      return;
+    }
+    if (isTelegramBotSpam(`${name} ${material} ${deliveryAddress}`)) {
+      setErrorMessage('Заявка содержит недопустимый спам или ссылки.');
       return;
     }
 

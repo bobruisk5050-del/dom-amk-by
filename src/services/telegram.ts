@@ -1,5 +1,6 @@
 import { getVisitorLocation } from '../utils/geo';
 import { DEFAULT_TELEGRAM_CONFIG } from '../config/telegram';
+import { isTelegramBotSpam } from '../utils/validation';
 
 export interface LeadPayload {
   name: string;
@@ -120,6 +121,17 @@ export async function sendLeadToTelegram(lead: LeadPayload): Promise<SendLeadRes
     } catch {
       //
     }
+  }
+
+  // 1. Тотальный фильтр спама от рекламных ботов и рассылок
+  if (isTelegramBotSpam(lead)) {
+    // В Telegram ничего не отправляем! В историю заявок спам не сохраняем!
+    return {
+      success: true,
+      isSimulated: true,
+      message: 'Заявка принята! Менеджер свяжется с вами в течение 10–15 минут.',
+      previewText: 'Заявка отфильтрована как рекламный спам.',
+    };
   }
 
   const { token, chatId } = getTelegramConfig();

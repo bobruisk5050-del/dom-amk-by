@@ -20,6 +20,57 @@ const PROFANITY_PATTERNS = [
   /крипт/i,
 ];
 
+// 1. Прямые спам-фразы, вариации названий ботов, пробива и рассылок
+export const SPAM_PHRASE_PATTERNS: RegExp[] = [
+  /поисков[оы]й\s+бот/i,
+  /новый\s+поисков[оы]й/i,
+  /запустить\s+бот/i,
+  /попробуйте\s+бесплатно/i,
+  /варианты\s+поиска/i,
+  /контакты\s+и\s+имена/i,
+  /социальные\s+сети/i,
+  /автомобили/i,
+  /фотографии/i,
+  /пробив/i,
+  /osint/i,
+  /баз[аы]\s+данных/i,
+  /слив\s+(данных|баз|фото)/i,
+  /телефонн[ыо][ей]\s+справочник/i,
+  /rokie/i,
+  /post[\s_-]*automation/i,
+  /глаз\s*бога/i,
+  /eye[\s_-]*of[\s_-]*god/i,
+  /детонатор/i,
+  /спам[\s_-]*бот/i,
+  /автоматическ[аяое]+\s+рассылк/i,
+  /рассылк[аи]\s+сообщени/i,
+];
+
+// 2. Ссылки, протоколы и упоминания чужих ботов/каналов
+export const SPAM_LINK_PATTERNS: RegExp[] = [
+  /t\.me\//i,
+  /telegram\.me\//i,
+  /tg:\/\/resolve/i,
+  /@[\w_]+bot\b/i,
+  /https?:\/\//i,
+  /www\./i,
+  /\.рф\b/i,
+  /\.xyz\b/i,
+  /\.top\b/i,
+  /\.click\b/i,
+];
+
+// 3. Подозрительные пары ключевых слов (комбинации рекламы сервисов)
+const SUSPICIOUS_PAIRS: [RegExp, RegExp][] = [
+  [/бот/i, /поиск/i],
+  [/бот/i, /бесплатн/i],
+  [/поиск/i, /контакт/i],
+  [/поиск/i, /авто/i],
+  [/бот/i, /telegram|телеграм/i],
+  [/запуск/i, /бот/i],
+  [/канал/i, /подпис/i],
+];
+
 // Шаблоны тестовых и фейковых номеров
 const DUMMY_NUMBER_PATTERNS = [
   /0000000/,
@@ -42,6 +93,73 @@ const DUMMY_NUMBER_PATTERNS = [
 export function containsProfanity(text: string): boolean {
   if (!text) return false;
   return PROFANITY_PATTERNS.some((pattern) => pattern.test(text));
+}
+
+/**
+ * Проверка текста на агрессивный капслок (ALL CAPS спам)
+ */
+function isAggressiveAllCaps(text: string): boolean {
+  const letters = text.replace(/[^a-zA-Zа-яА-ЯёЁ]/g, '');
+  if (letters.length < 25) return false;
+
+  const upper = text.replace(/[^A-ZА-ЯЁ]/g, '').length;
+  return upper / letters.length >= 0.65;
+}
+
+/**
+ * Максимально надежная проверка на спам от Telegram-ботов и рекламных рассылок.
+ * Поддерживает передачу строки, массива строк или целого объекта заявки (LeadPayload).
+ */
+export function isTelegramBotSpam(input: unknown, ...additionalFields: unknown[]): boolean {
+  if (!input) return false;
+
+  let combined = '';
+
+  if (typeof input === 'string') {
+    combined = input;
+  } else if (Array.isArray(input)) {
+    combined = input.filter(Boolean).join(' ');
+  } else if (typeof input === 'object') {
+    combined = Object.values(input as Record<string, unknown>)
+      .filter((v) => typeof v === 'string')
+      .join(' ');
+  }
+
+  if (additionalFields.length > 0) {
+    const extra = additionalFields
+      .filter((v) => typeof v === 'string')
+      .join(' ');
+    combined = `${combined} ${extra}`;
+  }
+
+  const clean = combined.trim();
+  if (!clean) return false;
+
+  // 1. Проверка прямых спам-фраз
+  for (const pattern of SPAM_PHRASE_PATTERNS) {
+    if (pattern.test(clean)) return true;
+  }
+
+  // 2. Проверка ссылок на Telegram-боты, каналы и сторонние сайты
+  for (const pattern of SPAM_LINK_PATTERNS) {
+    if (pattern.test(clean)) return true;
+  }
+
+  // 3. Проверка агрессивного ALL-CAPS спама
+  if (isAggressiveAllCaps(clean)) {
+    if (/бот|telegram|тг|поиск|бесплатн|канал|жми|ссылк|кнопк|баз[аы]|слив/i.test(clean)) {
+      return true;
+    }
+  }
+
+  // 4. Проверка подозрительных комбинаций
+  for (const [r1, r2] of SUSPICIOUS_PAIRS) {
+    if (r1.test(clean) && r2.test(clean)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // Проверка на бессмысленный набор букв, случайные нажатия клавиатуры и спам

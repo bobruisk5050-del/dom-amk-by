@@ -7,6 +7,7 @@ import {
   validateLocalBelarusDigits,
   containsProfanity,
   isGibberish,
+  isTelegramBotSpam,
   checkRateLimit,
   recordSubmitTimestamp,
 } from '../utils/validation';
@@ -73,6 +74,10 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
     }
     if (comment && (containsProfanity(comment) || isGibberish(comment))) {
       setErrorMessage('Пожалуйста, укажите реальное примечание или адрес доставки.');
+      return;
+    }
+    if (isTelegramBotSpam(`${name} ${material} ${comment}`)) {
+      setErrorMessage('Заявка содержит недопустимый спам или ссылки.');
       return;
     }
 
