@@ -151,7 +151,12 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
                   Основной склад и база
                 </span>
                 <span className="text-[11px] font-semibold flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-full ${whStatus.dotColor} ring-2 ring-emerald-500/20`} />
+                  <span className="relative flex h-2 w-2">
+                    {whStatus.isOpen && (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    )}
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${whStatus.dotColor}`} />
+                  </span>
                   <span className={whStatus.isOpen ? 'text-emerald-400 font-medium' : 'text-amber-400 font-medium'}>
                     {whStatus.isOpen ? 'Сейчас открыт' : 'Сейчас закрыт'}
                   </span>
@@ -205,7 +210,12 @@ export const ContactsAndMap: React.FC<ContactsAndMapProps> = ({ onOpenLeadModal 
                   Торговая точка (рынок)
                 </span>
                 <span className="text-[11px] font-semibold flex items-center gap-1.5">
-                  <span className={`w-2 h-2 rounded-full ${pavStatus.dotColor} ring-2 ring-emerald-500/20`} />
+                  <span className="relative flex h-2 w-2">
+                    {pavStatus.isOpen && (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    )}
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${pavStatus.dotColor}`} />
+                  </span>
                   <span className={pavStatus.isOpen ? 'text-emerald-400 font-medium' : 'text-slate-400 font-medium'}>
                     {pavStatus.isOpen ? 'Сейчас открыт' : 'Сейчас закрыт'}
                   </span>

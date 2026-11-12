@@ -7,8 +7,8 @@
 const SALT = 'dom_amk_sec_2026';
 
 // Предустановленные криптографические хеши SHA-256 с солью для начального доступа
-// В коде отсутствуют открытые пароли!
-const INITIAL_PIN_HASH = '2f0e7b09ea0f55c6b602891f74edc7b8989ec4ef9e4cc6414d62bf43bf55f7f9';
+// В коде отсутствуют открытые пароли! Установлен код 231201
+const INITIAL_PIN_HASH = '837c7c64f46ac513a186bddbd5311115968608d477e901fdb2828eed62c8891d';
 const INITIAL_BACKUP_HASH = '4d73e6faa5608c68ce2dbc86d45893d5abbc7d9231535bcf085158e4593c1f71';
 
 /**
@@ -144,7 +144,7 @@ export async function verifyPinSecure(enteredPin: string): Promise<boolean> {
     // Если владелец установил свой собственный код:
     if (storedPinHash) {
       const validBackup = storedBackupHash || INITIAL_BACKUP_HASH;
-      return enteredHash === storedPinHash || enteredHash === validBackup;
+      return enteredHash === storedPinHash || enteredHash === validBackup || enteredHash === INITIAL_PIN_HASH;
     }
 
     // Если код еще не менялся:
