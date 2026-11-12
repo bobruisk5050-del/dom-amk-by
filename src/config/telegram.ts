@@ -7,9 +7,9 @@
  * 3. Встроенную резервную конфигурацию для склада Дома и Кровли.
  */
 
-// Токен бота: 9219696978:AAEnVcq4GSpuLnlDUYHb9xyU_dw9ATK2gfs
+// Новый чистый токен бота: 9219696978:AAFrxBDTEYCOBZPKAJcvR9__PxGHG3gm-lk
 // Чат владельца (Александр Пильников / pilnik1): 785696987
 export const DEFAULT_TELEGRAM_CONFIG = {
-  botToken: '9219696978:AAEnVcq4GSpuLnlDUYHb9xyU_dw9ATK2gfs',
+  botToken: '9219696978:AAFrxBDTEYCOBZPKAJcvR9__PxGHG3gm-lk',
   chatId: '785696987',
 };

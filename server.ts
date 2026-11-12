@@ -21,9 +21,11 @@ function log(msg: string) {
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  // AI Studio environment constraint: dev server must ALWAYS listen on port 3000
+  // (process.env.PORT is 8080 used by the container proxy)
+  const PORT = 3000;
 
-  // CORS middleware to support any preview or external context
+  // CORS middleware to support preview and iframe environments
   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -41,7 +43,7 @@ async function startServer() {
     log(`POST /api/telegram/send body: ${JSON.stringify(req.body)}`);
     try {
       const { token, chatId, text, parseMode } = req.body;
-      const targetToken = (token || process.env.VITE_TELEGRAM_BOT_TOKEN || '9219696978:AAEnVcq4GSpuLnlDUYHb9xyU_dw9ATK2gfs').trim();
+      const targetToken = (token || process.env.VITE_TELEGRAM_BOT_TOKEN || '9219696978:AAFrxBDTEYCOBZPKAJcvR9__PxGHG3gm-lk').trim();
       const targetChatId = (chatId || process.env.VITE_TELEGRAM_CHAT_ID || '785696987').trim();
 
       if (!text) {
@@ -85,7 +87,10 @@ async function startServer() {
     });
   } else {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
